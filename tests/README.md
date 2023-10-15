@@ -1,13 +1,17 @@
-# Spartan Lisp - Simple Lisp
+# Examples
 
-Spartan Lisp (Slisp) is designed to be a quick and easy lisp with focus on ergonomics 
-without sacrificing performance. Currently, this repo only includes the python implemention used
-for testing and quick prototyping.
+Some examples of Slisp in action including:
+- peuler.slisp project euler problems
+- kadane.isp solution to kadanes problem
+- aoc*.isp advent of code solutions
 
-## Todo
-- Proper Macros
-- More primitives especially list related ones such as drop and @
-- Clean up the python implementation to not be a monolith file
-- More examples
-- Docs
-- Remote IPC support
+The aim of these examples is to get a tests suite of problems
+to verify the interpreter they are not intended to be the "best" solutions 
+merely ones that either use weird functionality or are the expected average code.
+
+## Running Examples
+
+```
+    python main.py
+    (import "tests/all.isp")
+```

@@ -11,7 +11,7 @@ Sum of square differences
     (- squaresum sumsquare)])
 
 
-(import "tests/unit.isp")
+(import "tests/unit.slisp")
 
 (Test "Euler-001 example " m3or5 10 23)
 (Test "Euler-001 question" m3or5 1000 233168)

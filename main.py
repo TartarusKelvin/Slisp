@@ -263,7 +263,7 @@ def islist(x):
     return isinstance(x, Sexpr) or isinstance(x, SLISPList)
 
 
-global_vars = {"isp-version": SLISPNumber(1), "None": None}
+global_vars = {"slisp-version": SLISPString("0.0.1"), "None": None}
 
 
 def evaluate(x, locale):
@@ -677,6 +677,9 @@ def run_file(p):
 
 
 if __name__ == "__main__":
-    print("ISP Version 0.0.1")
+    evaluate(
+        parse_program('(show (join "Spartan Lisp Version " (str slisp-version)))')[0],
+        {},
+    )
     run_file("stdlib.slisp")
     repl()

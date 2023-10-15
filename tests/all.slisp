@@ -1,3 +1,3 @@
-(set totests (os "ls tests | grep '.*\\.isp' | grep -v 'all\\.isp'"))
+(set totests (os "ls tests | grep '.*\\.slisp' | grep -v 'all\\.slisp'"))
 (fn import-test [x] (import (join "tests/" x)))
 (map import-test totests)
