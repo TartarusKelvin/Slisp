@@ -13,5 +13,5 @@ merely ones that either use weird functionality or are the expected average code
 
 ```
     python main.py
-    (import "tests/all.isp")
+    (import "tests/all.slisp")
 ```
