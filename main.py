@@ -1,3 +1,6 @@
+import traceback
+
+
 class Sexpr:
     def __init__(self, first, rest):
         self.first = first
@@ -535,11 +538,14 @@ def slisp_os(rest, locale):
     if isinstance(v, SLISPString):
         import subprocess
 
+        # TODO: Clean this up!
         return SLISPList(
-            SLISPString(x)
-            for x in subprocess.run(v.value, shell=True, stdout=subprocess.PIPE)
-            .stdout.decode("utf-8")
-            .split("\n")
+            [
+                SLISPString(x)
+                for x in subprocess.run(v.value, shell=True, stdout=subprocess.PIPE)
+                .stdout.decode("utf-8")
+                .split("\n")
+            ]
         )
     return SLISPString(str(v))
 
@@ -585,6 +591,21 @@ def slisp_take(rest, locale):
     ls = evaluate(rest[1], locale)
     if not isinstance(n, SLISPNumber):
         raise Exception("type")
+    if n.value > 0:
+        return SLISPList(ls.values[: int(n.value)])
+    else:
+        return SLISPList(ls.values[int(n.value) :])
+
+
+def slisp_drop(rest, locale):
+    if len(rest) != 2:
+        raise Exception("rank")
+    n = evaluate(rest[0], locale)
+    ls = evaluate(rest[1], locale)
+    if not isinstance(n, SLISPNumber):
+        raise Exception("type")
+    if n.value > 0:
+        return SLISPList(ls.values[int(n.value) :])
     return SLISPList(ls.values[: int(n.value)])
 
 
@@ -643,6 +664,7 @@ keywords = {
     "enlist": slisp_enlist,
     "str": slisp_str,
     "os": slisp_os,
+    "drop": slisp_drop,
 }
 
 
@@ -658,6 +680,7 @@ def repl():
                 r = evaluate(E, {})
             print(r)
         except Exception as e:
+            traceback.print_exc()
             print(e)
 
 

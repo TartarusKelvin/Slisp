@@ -8,7 +8,8 @@ Sum of square differences
     (fn square [x] (* x x))
     (set sumsquare (sum (map square x)))
     (set squaresum (square (sum x)))
-    (- squaresum sumsquare)])
+    (- squaresum sumsquare)
+])
 
 
 (import "tests/unit.slisp")
