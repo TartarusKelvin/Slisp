@@ -1,0 +1,19 @@
+Multiples of 3 or 5
+(fn m3or5 [x] 
+    (sum (* (set x (til x)) (| (= (mod 5 x) 0) (= (mod 3 x) 0)))))
+
+Sum of square differences
+(fn ssdiff [x] [ 
+    (set x (til x))
+    (fn square [x] (* x x))
+    (set sumsquare (sum (map square x)))
+    (set squaresum (square (sum x)))
+    (- squaresum sumsquare)])
+
+
+(import "tests/unit.isp")
+
+(Test "Euler-001 example " m3or5 10 23)
+(Test "Euler-001 question" m3or5 1000 233168)
+(Test "Euler-006 example " ssdiff 11 2640)
+(Test "Euler-006 question" ssdiff 101 25164150)

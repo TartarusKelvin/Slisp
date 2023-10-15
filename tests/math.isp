@@ -1,0 +1,6 @@
+(fn fac [x] 
+    (reduce op-mul (+ 1 (til x))))
+
+Note self can be replaced with fac-rec however i find it easier to read (also more macro friendly)
+(fn fac-rec [n]
+    (if (= n 0) 1 (* n (self (- n 1)))))

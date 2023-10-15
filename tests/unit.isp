@@ -1,0 +1,10 @@
+For "unit" testing
+
+(fn Test [name func param expected] [
+    (set result (call func (enlist param)))
+    (show (join name " ... " 
+        (if (set passed (min (enlist (= result expected))))
+            "Passed" 
+            (call join (map op-str ["Failed [ Expected  " expected "  found  " result " ]"])))))
+    (only passed)
+    ])

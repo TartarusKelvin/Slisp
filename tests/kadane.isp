@@ -1,0 +1,12 @@
+Using the fact that sum i to k is the same as sum to k - sum to i
+(fn kadane-sum [x] 
+    (max (- (set S (sums x)) 
+            (mins (fill 0 (prev S))))))
+
+
+(import "tests/unit.isp")
+Note seems to be a parser bug that doesnt allow nested lists so we have to use only
+(min [
+    (Test "kadane-sum simple" kadane-sum [(only [-2 1 -3 4 -1 2 1 -5 4])] 6)
+    (Test "kadane-sum all-positive" kadane-sum [(til 5)] 10)
+    (Test "kadane-sum all-negative" kadane-sum [(only [-1 -2 -3])] -1)])
