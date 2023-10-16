@@ -421,12 +421,12 @@ def slisp_map(rest, locale):
     if len(rest) != 2:
         raise Exception("rank")
     f = evaluate(rest[0], locale)
-    l = evaluate(rest[1], locale)
-    if not isinstance(l, SLISPList):
+    ls = evaluate(rest[1], locale)
+    if not isinstance(ls, SLISPList):
         raise Exception("type")
     if not isinstance(f, SLISPFunction):
         raise Exception("type")
-    return SLISPList([evaluate(Sexpr(f, [x]), locale) for x in l])
+    return SLISPList([evaluate(Sexpr(f, [x]), locale) for x in ls])
 
 
 def slisp_reduce(rest, locale):
@@ -434,19 +434,19 @@ def slisp_reduce(rest, locale):
         raise Exception("rank")
     f = evaluate(rest[0], locale)
     s = evaluate(rest[1], locale)
-    l = evaluate(rest[2], locale)
-    if not isinstance(l, SLISPList):
+    ls = evaluate(rest[2], locale)
+    if not isinstance(ls, SLISPList):
         raise Exception("type")
     if not isinstance(f, SLISPFunction):
         raise Exception("type")
     if len(f.params) != 2:
         raise Exception("rank")
-    if len(l) == 0:
+    if len(ls) == 0:
         return None
-    if len(l) == 1:
-        return l[0]
-    v = evaluate(Sexpr(f, [s, l[0]]), locale)
-    for x in l[1:]:
+    if len(ls) == 1:
+        return ls[0]
+    v = evaluate(Sexpr(f, [s, ls[0]]), locale)
+    for x in ls[1:]:
         v = evaluate(Sexpr(f, [v, x]), locale)
     return v
 
@@ -456,19 +456,19 @@ def slisp_scan(rest, locale):
         raise Exception("rank")
     f = evaluate(rest[0], locale)
     s = evaluate(rest[1], locale)
-    l = evaluate(rest[2], locale)
-    if not isinstance(l, SLISPList):
+    ls = evaluate(rest[2], locale)
+    if not isinstance(ls, SLISPList):
         raise Exception("type")
     if not isinstance(f, SLISPFunction):
         raise Exception("type")
     if len(f.params) != 2:
         raise Exception("rank")
-    if len(l) == 0:
+    if len(ls) == 0:
         return None
-    if len(l) == 1:
-        return l
-    v = [evaluate(Sexpr(f, [s, l[0]]), locale)]
-    for x in l[1:]:
+    if len(ls) == 1:
+        return ls
+    v = [evaluate(Sexpr(f, [s, ls[0]]), locale)]
+    for x in ls[1:]:
         v.append(evaluate(Sexpr(f, [v[-1], x]), locale))
     return SLISPList(v)
 
@@ -480,19 +480,19 @@ def slisp_each_prior(rest, locale):
         raise Exception("rank")
     f = evaluate(rest[0], locale)
     s = evaluate(rest[1], locale)
-    l = evaluate(rest[2], locale)
-    if not isinstance(l, SLISPList):
+    ls = evaluate(rest[2], locale)
+    if not isinstance(ls, SLISPList):
         raise Exception("type")
     if not isinstance(f, SLISPFunction):
         raise Exception("type")
     if len(f.params) != 2:
         raise Exception("rank")
 
-    if len(l) == 0:
+    if len(ls) == 0:
         return None
-    v = [evaluate(Sexpr(f, [s, l[0]]), locale)]
-    for i in range(1, len(l)):
-        v.append(evaluate(Sexpr(f, [l[i - 1], l[i]]), locale))
+    v = [evaluate(Sexpr(f, [s, ls[0]]), locale)]
+    for i in range(1, len(ls)):
+        v.append(evaluate(Sexpr(f, [ls[i - 1], ls[i]]), locale))
     return SLISPList(v)
 
 
@@ -573,14 +573,14 @@ def slisp_split(rest, locale):
     if len(rest) != 2:
         raise Exception("rank")
     f = evaluate(rest[0], locale)
-    l = evaluate(rest[1], locale)
-    if not isinstance(l, SLISPList):
+    ls = evaluate(rest[1], locale)
+    if not isinstance(ls, SLISPList):
         raise Exception("type")
-    if len(l) == 0:
+    if len(ls) == 0:
         return SLISPList([])
     r = []
     c = []
-    for rec in l:
+    for rec in ls:
         R = evaluate(rec, locale)
         if R == f and c:
             r.append(SLISPList(c))
