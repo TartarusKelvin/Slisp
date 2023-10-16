@@ -400,12 +400,16 @@ def slisp_func_def(rest, locale):
 
 
 def slisp_if(rest, locale):
-    if len(rest) != 3:
+    if len(rest) < 3:
         raise Exception("rank")
-    b = evaluate(rest[0], locale)
-    if b:
-        return evaluate(rest[1], locale)
-    return evaluate(rest[2], locale)
+    i = 0
+    while True:
+        b = evaluate(rest[i], locale)
+        if b:
+            return evaluate(rest[i + 1], locale)
+        if i + 3 == len(rest):
+            return evaluate(rest[i + 2], locale)
+        i += 2
 
 
 def slisp_til(rest, locale):
