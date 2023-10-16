@@ -11,10 +11,18 @@ Sum of square differences
     (- squaresum sumsquare)
 ])
 
+(import "tests/primes.slisp")
+
+(fn max-prime-fac [x] [
+    (set primes (primes-to-n (% x 2)))
+    (max (* primes (= (mod primes x) 0)))
+])
+
 
 (import "tests/unit.slisp")
 
 (Test "Euler-001 example " m3or5 10 23)
 (Test "Euler-001 question" m3or5 1000 233168)
+(Test "Euler-003 example " max-prime-fac 13195 29)
 (Test "Euler-006 example " ssdiff 11 2640)
 (Test "Euler-006 question" ssdiff 101 25164150)

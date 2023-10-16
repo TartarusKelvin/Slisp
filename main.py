@@ -1,4 +1,5 @@
 import traceback
+import sys
 
 
 class Sexpr:
@@ -23,6 +24,15 @@ class SLISPString:
     def __str__(s):
         return f'"{s.value}"'
 
+    def __iter__(self):
+        return self.value.__iter__()
+
+    def __len__(self):
+        return len(self.value)
+
+    def __getitem__(self, item):
+        return self.value[item]
+
 
 class SLISPNumber:
     def __init__(s, x):
@@ -42,6 +52,10 @@ class SLISPNumber:
     def __sub__(self, other):
         if other is not None:
             return SLISPNumber(self.value - other.value)
+
+    def __truediv__(self, other):
+        if other is not None:
+            return SLISPNumber(self.value / other.value)
 
     def __lt__(self, other):
         if other is not None:
@@ -67,6 +81,9 @@ class SLISPSymbol:
         s.value = x
 
     def __str__(s):
+        return f"'{s.value}"
+
+    def __repr__(s):
         return f"'{s.value}"
 
 
@@ -226,6 +243,7 @@ def parse_list(s: StringStream):
             continue
         if c == "[":
             items.append(parse_list(s))
+            continue
         if c == "]":
             if len(item):
                 items.append(item)
@@ -263,7 +281,7 @@ def isatomic(x):
 
 
 def islist(x):
-    return isinstance(x, Sexpr) or isinstance(x, SLISPList)
+    return isinstance(x, SLISPList) or isinstance(x, SLISPString)
 
 
 global_vars = {"slisp-version": SLISPString("0.0.1"), "None": None}
@@ -313,7 +331,7 @@ def dyadic_operation_with_lists(op):
             if len(f) != len(s):
                 raise Exception("length")
             return SLISPList([op(F, S) for F, S in zip(f, s)])
-        print(f, s)
+        # print(f, s)
         raise Exception(f"type got {type(f)} and {type(s)}")
 
     return wrapper
@@ -412,10 +430,11 @@ def slisp_map(rest, locale):
 
 
 def slisp_reduce(rest, locale):
-    if len(rest) != 2:
+    if len(rest) != 3:
         raise Exception("rank")
     f = evaluate(rest[0], locale)
-    l = evaluate(rest[1], locale)
+    s = evaluate(rest[1], locale)
+    l = evaluate(rest[2], locale)
     if not isinstance(l, SLISPList):
         raise Exception("type")
     if not isinstance(f, SLISPFunction):
@@ -426,8 +445,8 @@ def slisp_reduce(rest, locale):
         return None
     if len(l) == 1:
         return l[0]
-    v = evaluate(Sexpr(f, [l[0], l[1]]), locale)
-    for x in l[2:]:
+    v = evaluate(Sexpr(f, [s, l[0]]), locale)
+    for x in l[1:]:
         v = evaluate(Sexpr(f, [v, x]), locale)
     return v
 
@@ -631,6 +650,39 @@ def slisp_call(rest, locale):
     return evaluate(Sexpr(n, ls), locale)
 
 
+def slisp_time(rest, locale):
+    if len(rest) != 0:
+        raise Exception("rank")
+    import time
+
+    return SLISPNumber(float(time.time()))
+
+
+def eq(x, y):
+    r = x == y
+    if isinstance(r, SLISPNumber):
+        return r
+    if isinstance(r, bool):
+        r = float(r)
+    return SLISPNumber(r)
+
+
+def slisp_first(rest, locale):
+    if len(rest) != 1:
+        raise Exception("rank")
+    v = evaluate(rest[0], locale)
+    if isinstance(v, SLISPList) and len(v) > 0:
+        return v[0]
+
+
+def slisp_len(rest, locale):
+    if len(rest) != 1:
+        raise Exception("rank")
+    v = evaluate(rest[0], locale)
+    if isinstance(v, SLISPList):
+        return SLISPNumber(len(v))
+
+
 keywords = {
     "+": dyadic_operation_with_lists(lambda x, y: x + y),
     "-": dyadic_operation_with_lists(lambda x, y: x - y),
@@ -638,7 +690,7 @@ keywords = {
     "%": dyadic_operation_with_lists(lambda x, y: x / y),
     "|": dyadic_operation_with_lists(lambda x, y: x if x > y else y),
     "&": dyadic_operation_with_lists(lambda x, y: x if x < y else y),
-    "=": dyadic_operation_with_lists(lambda x, y: x == y),
+    "=": dyadic_operation_with_lists(eq),
     "mod": dyadic_operation_with_lists(lambda x, y: y % x),
     "fill": dyadic_operation_with_lists(lambda x, y: x if y is None else y),
     "set": slisp_set_value,
@@ -665,6 +717,9 @@ keywords = {
     "str": slisp_str,
     "os": slisp_os,
     "drop": slisp_drop,
+    "time": slisp_time,
+    "first": slisp_first,
+    "len": slisp_len,
 }
 
 
@@ -705,4 +760,6 @@ if __name__ == "__main__":
         {},
     )
     run_file("stdlib.slisp")
+    for x in sys.argv[1:]:
+        run_file(x)
     repl()

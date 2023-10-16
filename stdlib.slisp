@@ -18,9 +18,9 @@ TODO allow operators to act as naked lambdas
 (fn prev [x] (prior op-left x))
 
 Common wrappers arround functions to make them work over lists
-(fn max [x] (reduce op-max x))
+(fn max [x] (reduce op-max 0 x))
 (fn maxs [x] (scan op-max 0 x))
-(fn min [x] (reduce op-min x))
+(fn min [x] (reduce op-min 1 x))
 (fn mins [x] (scan op-min 0 x))
-(fn sum [x] (reduce op-add x))
+(fn sum [x] (reduce op-add 0 x))
 (fn sums [x] (scan op-add 0 x))

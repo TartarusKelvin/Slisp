@@ -1,0 +1,4 @@
+(fn primes-to-n [n] [
+    (fn add_prime [l x] (if (max (= (mod l x) 0)) l (join l (enlist x))))
+    (reduce add_prime (only [2]) (+ (til n) 2))
+    ])

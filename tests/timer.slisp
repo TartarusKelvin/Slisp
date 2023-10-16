@@ -1,0 +1,4 @@
+(fn time-func [func param] [
+    (set start (time))
+    (call func param)
+    (- (time) start)])
