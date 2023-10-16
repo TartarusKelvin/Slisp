@@ -1,13 +1,11 @@
 (import "tests/unit.slisp")
 
-
-Running Sum
+===================================== Running Sum ========================================
 (fn pw238-1 [x] (sums x))
 (Test "Pearl Weekly 238-1 Running Sum case 1" pw238-1 [(only [1 2 3 4 5])] [1 3 6 10 15])
 (Test "Pearl Weekly 238-1 Running Sum case 2" pw238-1 [(only [1 1 1 1 1])] [1 2 3 4 5])
 (Test "Pearl Weekly 238-1 Running Sum case 3" pw238-1 [(only [0 -1 1 2])] [0 -1 0 2])
-
-Same string
+===================================== Same string ========================================
 (fn pw239-1 [x y] [
     (set fstring (call join x))
     (set sstring (call join y))
@@ -15,13 +13,10 @@ Same string
 (Test "Pearl Weekly 239-1 Same String case 1" pw239-1 [["ab" "c"] ["a" "bc"]] 1)
 (Test "Pearl Weekly 239-1 Same String case 2" pw239-1 [["ab" "c"] ["ac" "b"]] 0)
 (Test "Pearl Weekly 239-1 Same String case 3" pw239-1 [["ab" "cd" "e"] ["abcde"]] 1)
-
-Consistent Strings
+=================================== Consistent Strings ===================================
 (fn pw239-2 [allowed strings] [
     ])
-
-
-Unique Sum
+========================================= Unique Sum =====================================
 (fn pw228-1a [inp acc] [
     (if (= 1 (len inp)) (+ acc (first inp))
         (if (min (set mask (- 1 (= (set tval (first inp)) (set tail (drop 1 inp)))))) 

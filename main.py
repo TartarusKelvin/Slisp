@@ -292,9 +292,6 @@ def islist(x):
     return isinstance(x, SLISPList) or isinstance(x, SLISPString)
 
 
-global_vars = {"slisp-version": SLISPString("0.0.1"), "None": None}
-
-
 def evaluate(x, locale):
     # print(f"Evaluating {x}")
     locale = locale or {}
@@ -405,6 +402,31 @@ def slisp_func_def(rest, locale):
         locale[func.name] = func
     else:
         global_vars[func.name] = func
+    return func
+
+
+def slisp_lambda_def(rest, locale):
+    if len(rest) != 2:
+        raise Exception("length")
+    params, exprs = rest
+    if not isinstance(params, SLISPList):
+        raise Exception("Function params must be a list of symbols")
+    ps = []
+    for p in params.values:
+        if not isinstance(p, SLISPSymbol):
+            raise Exception("Function params must be a list of symbols")
+        ps.append(p.value)
+    if isinstance(exprs, Sexpr):
+        exprs = SLISPList([exprs])
+    if not isinstance(exprs, SLISPList):
+        raise Exception("Function params must be a list of Sexprs")
+    exps = []
+    for e in exprs.values:
+        if not isinstance(e, Sexpr):
+            raise Exception("Function params must be a list of Sexpr")
+        exps.append(e)
+    func = SLISPFunction("", ps, exps)
+    return func
 
 
 def slisp_if(rest, locale):
@@ -716,6 +738,7 @@ keywords = {
     "del": slisp_unset_value,
     "show": slisp_show,
     "fn": slisp_func_def,
+    "lm": slisp_lambda_def,
     "if": slisp_if,
     "til": slisp_til,
     "map": slisp_map,
@@ -760,6 +783,11 @@ def repl():
 
 
 imported = []
+global_vars = {
+    "slisp-version": SLISPString("0.0.1"),
+    "None": None,
+    "slisp-keywords": SLISPList([SLISPString(x) for x in keywords]),
+}
 
 
 def run_file(p):
