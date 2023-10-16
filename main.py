@@ -2,6 +2,11 @@ import traceback
 import sys
 
 
+class SLISPReturn(Exception):
+    def __init__(self, rvalue):
+        self.rvalue = rvalue
+
+
 class Sexpr:
     def __init__(self, first, rest):
         self.first = first
@@ -115,16 +120,19 @@ class SLISPFunction:
         return f"(λ {self.name} [{';'.join(self.params)}])"
 
     def execute(self, rest, locale):
-        if len(rest) != len(self.params):
-            raise Exception("rank")
-        self.locale = {x: evaluate(y, locale) for x, y in zip(self.params, rest)}
-        self.locale["self"] = self
-        # self.locale["set"] = self.set_value
-        # self.locale["fn"] = self.set_value
-        r = None
-        for E in self.exprs:
-            r = evaluate(E, locale=self.locale)
-        return r
+        try:
+            if len(rest) != len(self.params):
+                raise Exception("rank")
+            self.locale = {x: evaluate(y, locale) for x, y in zip(self.params, rest)}
+            self.locale["self"] = self
+            # self.locale["set"] = self.set_value
+            # self.locale["fn"] = self.set_value
+            r = None
+            for E in self.exprs:
+                r = evaluate(E, locale=self.locale)
+            return r
+        except SLISPReturn as returnv:
+            return returnv.rvalue
 
 
 class StringStream:
@@ -679,6 +687,13 @@ def slisp_first(rest, locale):
         return v[0]
 
 
+def slisp_return(rest, locale):
+    if len(rest) != 1:
+        raise Exception("rank")
+    v = evaluate(rest[0], locale)
+    raise SLISPReturn(v)
+
+
 def slisp_len(rest, locale):
     if len(rest) != 1:
         raise Exception("rank")
@@ -724,6 +739,7 @@ keywords = {
     "time": slisp_time,
     "first": slisp_first,
     "len": slisp_len,
+    "return": slisp_return,
 }
 
 
