@@ -20,7 +20,8 @@ TODO allow operators to act as naked lambdas
 Common wrappers arround functions to make them work over lists
 (fn max [x] (reduce op-max 0 x))
 (fn maxs [x] (scan op-max 0 x))
-(fn min [x] (reduce op-min 1 x))
+(fn min [x] (reduce op-min (first x) x))
 (fn mins [x] (scan op-min 0 x))
 (fn sum [x] (reduce op-add 0 x))
 (fn sums [x] (scan op-add 0 x))
+(fn sort [x] (call (only x) (rank x)))

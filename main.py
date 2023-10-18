@@ -231,7 +231,7 @@ def parse_sexpr(s: StringStream):
         if c == '"':
             items.append(parse_string(s))
             continue
-        if c in "123456790" or (c == "-" and s.peek() in "1234567890"):
+        if c in "1234568790" or (c == "-" and s.peek() in "1234567890"):
             # print("number", c)
             s.step_back()
             items.append(parse_number(s))
@@ -264,7 +264,7 @@ def parse_list(s: StringStream):
         if c == '"':
             items.append(parse_string(s))
             continue
-        if c in "123456790" or (c == "-" and s.peek() in "1234567890"):
+        if c in "1234568790" or (c == "-" and s.peek() in "1234567890"):
             # print("number", c)
             s.step_back()
             items.append(parse_number(s))
@@ -310,6 +310,18 @@ def evaluate(x, locale):
                     return F.execute(x.rest, locale)
         if isinstance(f, SLISPFunction):
             return f.execute(x.rest, locale)
+        if isinstance(f, SLISPList):
+            if min([isinstance(y, SLISPNumber) for y in x.rest]):
+                r = [f[int(i.value)] for i in x.rest]
+                if len(r) == 1:
+                    return r[0]
+                return SLISPList(r)
+        if isinstance(f, SLISPString):
+            if min([isinstance(y, SLISPNumber) for y in x.rest]):
+                r = [f[int(i.value)] for i in x.rest]
+                if len(r) == 1:
+                    return r[0]
+                return SLISPString("".join(r))
         return x
     if isinstance(x, SLISPSymbol):
         if x.value in locale:
@@ -337,7 +349,9 @@ def dyadic_operation_with_lists(op):
                 raise Exception("length")
             return SLISPList([op(F, S) for F, S in zip(f, s)])
         # print(f, s)
-        raise Exception(f"type got {type(f)} and {type(s)}")
+        raise Exception(
+            f"type got {type(f)} and {type(s)} values: {f} {s} {evaluate(f,locale)}, {locale}"
+        )
 
     return wrapper
 
@@ -724,6 +738,16 @@ def slisp_len(rest, locale):
         return SLISPNumber(len(v))
 
 
+def slisp_rank(rest, locale):
+    if len(rest) != 1:
+        raise Exception("rank")
+    v = evaluate(rest[0], locale)
+    if isinstance(v, SLISPList):
+        return SLISPList([SLISPNumber(v.values.index(x)) for x in sorted(v.values)])
+    if isinstance(v, SLISPString):
+        return SLISPList([SLISPNumber(v.value.index(x)) for x in sorted(v.value)])
+
+
 keywords = {
     "+": dyadic_operation_with_lists(lambda x, y: x + y),
     "-": dyadic_operation_with_lists(lambda x, y: x - y),
@@ -763,6 +787,7 @@ keywords = {
     "first": slisp_first,
     "len": slisp_len,
     "return": slisp_return,
+    "rank": slisp_rank,
 }
 
 
@@ -778,7 +803,7 @@ def repl():
                 r = evaluate(E, {})
             print(r)
         except Exception as e:
-            traceback.print_exc()
+            # traceback.print_exc()
             print(e)
 
 
