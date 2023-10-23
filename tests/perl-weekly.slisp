@@ -66,5 +66,5 @@ Count the number of iterations required for the following to reduce to an empty 
 
 ================================== String shuffle =====================================
 
-(fn pw226-1 [istring idxs] [(call (only istring) (rank idxs))])
+(fn pw226-1 [istring idxs] [(call (istring) (rank idxs))])
 (Test "Pearl Weekly 226-1 String Shuffle case 1" pw226-1 ["lacelengh" [3 2 0 5 4 8 6 7 1]] "challenge") 

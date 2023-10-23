@@ -1,3 +1,6 @@
 (set totests (os "ls tests | grep '.*\\.slisp' | grep -v 'all\\.slisp'"))
-(fn import-test [x] (import (join "tests/" x)))
+(fn import-test [x] [
+ (show x)
+ (import (join "tests/" x))
+ ])
 (map import-test (drop -1 totests))
