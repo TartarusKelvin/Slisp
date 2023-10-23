@@ -7,6 +7,7 @@ TODO allow operators to act as naked lambdas
 (fn op-sub [x y] (- x y))
 (fn op-max [x y] (| x y))
 (fn op-min [x y] (& x y))
+(fn match [x y] (if (= (len x) (len y)) (min (= x y)) 0))
 
 
 (fn op-str [x] (str x))
