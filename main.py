@@ -322,6 +322,12 @@ def evaluate(x, locale):
                 if len(r) == 1:
                     return r[0]
                 return SLISPString("".join(r))
+        if isinstance(f, SLISPSymbol):
+            if f.value in locale:
+                return locale[f.value]
+            if f.value in global_vars:
+                return global_vars[f.value]
+            raise Exception(f"Sexpr Unkown vairable:  {f.value}")
         return x
     if isinstance(x, SLISPSymbol):
         if x.value in locale:
@@ -622,6 +628,8 @@ def slisp_split(rest, locale):
         raise Exception("rank")
     f = evaluate(rest[0], locale)
     ls = evaluate(rest[1], locale)
+    if isinstance(ls, SLISPString):
+        return SLISPList([SLISPString(x) for x in ls.value.split(f.value)])
     if not isinstance(ls, SLISPList):
         raise Exception("type")
     if len(ls) == 0:
@@ -657,7 +665,7 @@ def slisp_take(rest, locale):
     n = evaluate(rest[0], locale)
     ls = evaluate(rest[1], locale)
     if not isinstance(n, SLISPNumber):
-        raise Exception("type")
+     Exception("type")
     if n.value > 0:
         return SLISPList(ls.values[: int(n.value)])
     else:
@@ -735,6 +743,8 @@ def slisp_len(rest, locale):
         raise Exception("rank")
     v = evaluate(rest[0], locale)
     if isinstance(v, SLISPList):
+        return SLISPNumber(len(v))
+    if isinstance(v, SLISPString):
         return SLISPNumber(len(v))
 
 
